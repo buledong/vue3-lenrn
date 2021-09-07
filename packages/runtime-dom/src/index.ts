@@ -53,7 +53,13 @@ export const hydrate = ((...args) => {
   ensureHydrationRenderer().hydrate(...args)
 }) as RootHydrateFunction
 
+// vue3源码分析 createApp
+// 主要做了两件事情
+// 1. 创建app对象
+// 2. 重写mount方法
 export const createApp = ((...args) => {
+  // 创建app对象
+  // ensureRenderer() 用来创建渲染器对象, 这里会延时创建, 就是当调用时才会创建, 好处是1. 可以由用户传入自定义渲染器对象, 2. 当用户只依赖响应式包时, 可以tree-shaking掉核心渲染器逻辑的相关代码
   const app = ensureRenderer().createApp(...args)
 
   if (__DEV__) {
@@ -62,7 +68,10 @@ export const createApp = ((...args) => {
   }
 
   const { mount } = app
+  // 重写mount方法
+  // 为什么重写这个方法, 而不是在之前的mount中实现这里的逻辑呢? 因为vue的目标是支持跨平台渲染, 这里的mount是web平台的mount, 之前的是一个标准的可跨平台的组件渲染流程
   app.mount = (containerOrSelector: Element | ShadowRoot | string): any => {
+    // 标准化容器, 因为可以传入dom对象, 也可以传入选择器, 标准化之后, 就是一个dom容器了
     const container = normalizeContainer(containerOrSelector)
     if (!container) return
 

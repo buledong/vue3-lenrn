@@ -22,7 +22,8 @@ export const nodeOps: Omit<RendererOptions<Node, Element>, 'patchProp'> = {
   createElement: (tag, isSVG, is, props): Element => {
     const el = isSVG
       ? doc.createElementNS(svgNS, tag)
-      : doc.createElement(tag, is ? { is } : undefined)
+      : // 这里创建的元素仍然是 tag, 只是会在dom元素上加一个 is 的属性, 值为is
+        doc.createElement(tag, is ? { is } : undefined)
 
     if (tag === 'select' && props && props.multiple != null) {
       ;(el as HTMLSelectElement).setAttribute('multiple', props.multiple)

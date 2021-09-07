@@ -38,6 +38,11 @@ export function markAttrsAccessed() {
   accessedAttrs = true
 }
 
+/**
+ * 执行组件的render函数, 创建整个组件内部的vnode
+ * @param instance 组件实例
+ * @returns 子树vnode
+ */
 export function renderComponentRoot(
   instance: ComponentInternalInstance
 ): VNode {

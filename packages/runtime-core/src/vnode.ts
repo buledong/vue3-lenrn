@@ -338,6 +338,11 @@ export const createVNode = (__DEV__
   ? createVNodeWithArgsTransform
   : _createVNode) as typeof _createVNode
 
+// 主要做了三件事
+// 1. 对props上的class和style标准化
+// 2. 对vnode的type类型进行编码
+// 3. 标准化子节点children
+// 返回vnode
 function _createVNode(
   type: VNodeTypes | ClassComponent | typeof NULL_DYNAMIC_COMPONENT,
   props: (Data & VNodeProps) | null = null,
@@ -375,6 +380,7 @@ function _createVNode(
   }
 
   // class & style normalization.
+  // 处理peops, 主要是标准化 class和style
   if (props) {
     // for reactive or proxy objects, we need to clone it to enable mutation.
     if (isProxy(props) || InternalObjectKey in props) {
@@ -452,6 +458,7 @@ function _createVNode(
     warn(`VNode created with invalid key (NaN). VNode type:`, vnode.type)
   }
 
+  // 标准子节点children
   normalizeChildren(vnode, children)
 
   // normalize suspense children

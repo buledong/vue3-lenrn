@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="../packages/vue/dist/vue.global.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <p>我是children</p>
+  </div>
+  <script type="module">
+
+    const {createApp} = Vue
+    debugger
+    createApp({
+     template:`<div>2222<span>span</span></div>`
+    }).mount('#app')
+  </script>
+</body>
+
+</html>

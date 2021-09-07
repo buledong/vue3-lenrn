@@ -266,13 +266,15 @@ export function createAppAPI<HostElement>(
         context.directives[name] = directive
         return app
       },
-
+      // 主要做了两件事, 1. 创建vnode, 2. 根据渲染器render渲染vnode, 然后将app返回
+      // vue3源码分析 mount 通用
       mount(
         rootContainer: HostElement,
         isHydrate?: boolean,
         isSVG?: boolean
       ): any {
         if (!isMounted) {
+          // 创建根组件 vnode
           const vnode = createVNode(
             rootComponent as ConcreteComponent,
             rootProps
@@ -291,6 +293,7 @@ export function createAppAPI<HostElement>(
           if (isHydrate && hydrate) {
             hydrate(vnode as VNode<Node, Element>, rootContainer as any)
           } else {
+            // 利用渲染器渲染 vnode
             render(vnode, rootContainer, isSVG)
           }
           isMounted = true

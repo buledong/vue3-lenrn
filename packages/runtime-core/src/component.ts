@@ -557,7 +557,7 @@ export function setupComponent(
   initSlots(instance, children)
 
   const setupResult = isStateful
-    ? setupStatefulComponent(instance, isSSR)
+    ? setupStatefulComponent(instance, isSSR) // render 生成在这里
     : undefined
   isInSSRComponentSetup = false
   return setupResult
@@ -602,6 +602,7 @@ function setupStatefulComponent(
     exposePropsOnRenderContext(instance)
   }
   // 2. call setup()
+  // vue3源码分析 组件 setup
   const { setup } = Component
   if (setup) {
     const setupContext = (instance.setupContext =
@@ -731,6 +732,7 @@ export function finishComponentSetup(
       NOOP) as InternalRenderFunction
   } else if (!instance.render) {
     // could be set from setup()
+    // 确保 render 函数
     if (compile && !Component.render) {
       const template =
         (__COMPAT__ &&
