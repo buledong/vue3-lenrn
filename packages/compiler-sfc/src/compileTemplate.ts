@@ -119,6 +119,8 @@ export function compileTemplate(
   const preprocessor = preprocessLang
     ? preprocessCustomRequire
       ? preprocessCustomRequire(preprocessLang)
+      : __ESM_BROWSER__
+      ? undefined
       : require('consolidate')[preprocessLang as keyof typeof consolidate]
     : false
   if (preprocessor) {
@@ -127,7 +129,7 @@ export function compileTemplate(
         ...options,
         source: preprocess(options, preprocessor)
       })
-    } catch (e) {
+    } catch (e: any) {
       return {
         code: `export default function render() {}`,
         source: options.source,
@@ -140,14 +142,10 @@ export function compileTemplate(
       code: `export default function render() {}`,
       source: options.source,
       tips: [
-        `Component ${
-          options.filename
-        } uses lang ${preprocessLang} for template. Please install the language preprocessor.`
+        `Component ${options.filename} uses lang ${preprocessLang} for template. Please install the language preprocessor.`
       ],
       errors: [
-        `Component ${
-          options.filename
-        } uses lang ${preprocessLang} for template, however it is not installed.`
+        `Component ${options.filename} uses lang ${preprocessLang} for template, however it is not installed.`
       ]
     }
   } else {

@@ -17,20 +17,24 @@ export function defaultOnWarn(msg: CompilerError) {
   __DEV__ && console.warn(`[Vue warn] ${msg.message}`)
 }
 
+type InferCompilerError<T> = T extends ErrorCodes
+  ? CoreCompilerError
+  : CompilerError
+
 export function createCompilerError<T extends number>(
   code: T,
   loc?: SourceLocation,
   messages?: { [code: number]: string },
   additionalMessage?: string
-): T extends ErrorCodes ? CoreCompilerError : CompilerError {
+): InferCompilerError<T> {
   const msg =
     __DEV__ || !__BROWSER__
       ? (messages || errorMessages)[code] + (additionalMessage || ``)
       : code
-  const error = new SyntaxError(String(msg)) as CompilerError
+  const error = new SyntaxError(String(msg)) as InferCompilerError<T>
   error.code = code
   error.loc = loc
-  return error as any
+  return error
 }
 
 export const enum ErrorCodes {
@@ -63,6 +67,7 @@ export const enum ErrorCodes {
   X_INVALID_END_TAG,
   X_MISSING_END_TAG,
   X_MISSING_INTERPOLATION_END,
+  X_MISSING_DIRECTIVE_NAME,
   X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END,
 
   // transform errors
@@ -128,7 +133,7 @@ export const errorMessages: Record<ErrorCodes, string> = {
     "Attribute name cannot start with '='.",
   [ErrorCodes.UNEXPECTED_QUESTION_MARK_INSTEAD_OF_TAG_NAME]:
     "'<?' is allowed only in XML context.",
-  [ErrorCodes.UNEXPECTED_NULL_CHARACTER]: `Unexpected null cahracter.`,
+  [ErrorCodes.UNEXPECTED_NULL_CHARACTER]: `Unexpected null character.`,
   [ErrorCodes.UNEXPECTED_SOLIDUS_IN_TAG]: "Illegal '/' in tags.",
 
   // Vue-specific parse errors
@@ -139,6 +144,7 @@ export const errorMessages: Record<ErrorCodes, string> = {
   [ErrorCodes.X_MISSING_DYNAMIC_DIRECTIVE_ARGUMENT_END]:
     'End bracket for dynamic directive argument was not found. ' +
     'Note that dynamic directive argument cannot contain spaces.',
+  [ErrorCodes.X_MISSING_DIRECTIVE_NAME]: 'Legal directive name was expected.',
 
   // transform errors
   [ErrorCodes.X_V_IF_NO_EXPRESSION]: `v-if/v-else-if is missing expression.`,
